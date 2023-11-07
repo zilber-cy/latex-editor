@@ -1,0 +1,19 @@
+.admin-panel-pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.phase-badge {
+  display: inline-block;
+  font-size: @font-size-small;
+  white-space: nowrap;
+  text-align: center;
+  padding: 3px 7px;
+  &:extend(.label);
+  &:extend(.label-info);
+}
+
+.scrollable {
+  max-height: calc(100vh - 40vh);
+  overflow-y: auto;
+}

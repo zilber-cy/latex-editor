@@ -1,0 +1,10 @@
+project-history
+--dependencies=mongo,redis
+--docker-repos=gcr.io/overleaf-ops
+--env-add=
+--env-pass-through=
+--esmock-loader=True
+--has-custom-nodemon=True
+--node-version=18.17.1
+--public-repo=False
+--script-version=4.3.0

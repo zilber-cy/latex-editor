@@ -1,0 +1,99 @@
+extends ../layout-marketing
+include ../_mixins/bookmarkable_tabset
+
+block content
+	.content.content-alt
+		.container
+			.row
+				.col-xs-12
+					.card
+						.page-header
+							h1 管理面板
+						div(data-ol-bookmarkable-tabset)
+							ul.nav.nav-tabs(role="tablist")
+								+bookmarkable-tabset-header('system-messages', '系统消息', true)
+								+bookmarkable-tabset-header('open-sockets', '开启套接字')
+								+bookmarkable-tabset-header('open-close-editor', '开关编辑器')
+								if hasFeature('saas')
+									+bookmarkable-tabset-header('tpds', 'TPDS/Dropbox Management')
+
+							.tab-content
+								.tab-pane.active(
+									role="tabpanel"
+									id='system-messages'
+								)
+									each message in systemMessages
+										.alert.alert-info.row-spaced(ng-non-bindable) #{message.content}
+									hr
+									form(method='post', action='/admin/messages')
+										input(name="_csrf", type="hidden", value=csrfToken)
+										.form-group
+											label(for="content")
+											input.form-control(name="content", type="text", placeholder="消息内容…", required)
+										button.btn.btn-primary(type="submit") 发送消息
+									hr
+									form(method='post', action='/admin/messages/clear')
+										input(name="_csrf", type="hidden", value=csrfToken)
+										button.btn.btn-danger(type="submit")  清除所有消息
+
+								.tab-pane(
+									role="tabpanel"
+									id='open-sockets'
+								)
+									.row-spaced
+										ul
+											each agents, url in openSockets
+												li(ng-non-bindable) #{url} - total : #{agents.length}
+													ul
+														each agent in agents
+															li(ng-non-bindable) #{agent}
+
+								.tab-pane(
+									role="tabpanel"
+									id='open-close-editor'
+								)
+									if hasFeature('saas')
+										| “打开/关闭编辑器”功能在SAAS中不可用。
+									else
+										.row-spaced
+											form(method='post',action='/admin/closeEditor')
+												input(name="_csrf", type="hidden", value=csrfToken)
+												button.btn.btn-danger(type="submit") 关闭编辑器
+											p.small  将关闭编辑器，所有用户将被强制断开连接。
+
+										.row-spaced
+											form(method='post',action='/admin/disconnectAllUsers')
+												input(name="_csrf", type="hidden", value=csrfToken)
+												button.btn.btn-danger(type="submit") 断开所有用户
+											p.small 将在编辑器打开时强制断开所有用户的连接。确保先关闭编辑器以避免重新连接。
+
+										.row-spaced
+											form(method='post',action='/admin/openEditor')
+												input(name="_csrf", type="hidden", value=csrfToken)
+												button.btn.btn-danger(type="submit") 重新开启编辑器
+											p.small 将在关闭后重新打开编辑器。
+
+								if hasFeature('saas')
+									.tab-pane(
+										role="tabpanel"
+										id='tpds'
+									)
+										h3 Flush project to TPDS
+										.row
+											form.col-xs-6(method='post',action='/admin/flushProjectToTpds')
+												input(name="_csrf", type="hidden", value=csrfToken)
+												.form-group
+													label(for='project_id') project_id
+													input.form-control(type='text',  name='project_id', placeholder='project_id', required)
+												.form-group
+													button.btn-primary.btn(type='submit') Flush
+										hr
+										h3 Poll Dropbox for user
+										.row
+											form.col-xs-6(method='post',action='/admin/pollDropboxForUser')
+												input(name="_csrf", type="hidden", value=csrfToken)
+												.form-group
+													label(for='user_id') user_id
+													input.form-control(type='text',  name='user_id', placeholder='user_id', required)
+												.form-group
+													button.btn-primary.btn(type='submit') Poll

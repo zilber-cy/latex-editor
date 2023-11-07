@@ -1,0 +1,6 @@
+# docker image build
+.dockerignore
+.history
+# user defined files
+.env
+docker-compose.override.yml
